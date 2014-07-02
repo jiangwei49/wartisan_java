@@ -14,6 +14,8 @@ import com.methodInterface.formatData;
 
 public class formatJsonData implements formatData{
 	//对特殊值的截取处理
+	//test for git
+	
 	public String slipData(String valueProperty) {
 		
 		String validValue = null;
