@@ -26,9 +26,13 @@ public class readXml {
 
 		Map<String, String> dbInformation = new HashMap<String, String>();
 		try {
-			String path = "c:/tools/workspace/Wartisan/" + fileName; // 设置路径+文件名(根据个人文件的路径而定)
+			String path = fileName; // 设置路径+文件名(根据个人文件的路径而定)
 
 			File file = new File(path);
+			if (! file.exists()) {
+				System.err.println("file not exist!");
+				System.exit(1);
+			}
 			SAXReader reader = new SAXReader(); // 使用SAX方式解析XML
 			Document doc = reader.read(file); // 将XML文件解析成文档对象
 			Element root = doc.getRootElement(); // 取得根节点

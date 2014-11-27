@@ -68,27 +68,21 @@ public class OperateMongoDB {
 	 * @throws MongoException
 	 * @throws JSONException 
 	 */
-	public List<JSONObject> operaMongoDB(DBCollection collection, String keyword,
+	public String[] operaMongoDB(DBCollection collection, String keyword,
 			String keyvalue) throws UnknownHostException, MongoException, JSONException {
 
 		// 然后我们使用这个游标来遍历集合
 		// 初始化后的数组长度需要控制和调整。 10 这个长度需要控制
 		String[] dataJsonArray = new String[1];
-		JSONObject caseOneJson = new JSONObject();
-		List<JSONObject> listObject = new ArrayList<JSONObject>();
 		
 		BasicDBObject query = new BasicDBObject(keyword, keyvalue);
 		// 查询数据库中的数据
-		// DBObject oneObject1 = collection.findOne(query);
 		DBCursor allCursor = collection.find();
-		JSONArray arry = JSONArray.fromObject(dataJsonArray);
 		if (keyword == "" && keyvalue == "") {
 
 			dataJsonArray = new String[allCursor.count()];
 			for (int n = 0; allCursor.hasNext(); n++) {
 				dataJsonArray[n] = JSON.serialize(allCursor.next());
-				caseOneJson = new JSONObject(dataJsonArray[n]);
-				listObject.add(n, caseOneJson);
 			}
 		} else {
 			query.put(keyword, keyvalue);
@@ -96,34 +90,43 @@ public class OperateMongoDB {
 			dataJsonArray = new String[allCursor.size()];
 			for (int i = 0; allCursor.hasNext(); i++) {
 				dataJsonArray[i] = JSON.serialize((allCursor.next()));
-				caseOneJson = new JSONObject(dataJsonArray[i]);
-				
-				listObject.add(i, caseOneJson);
 			}
 		}
 		
-		return listObject;
+		return dataJsonArray;
 	}
 
-	public String saveDataDB(DBCollection collection, BasicDBObject resultObject, String[] resultList) {
-//		BasicDBObject resultObject = new BasicDBObject();
-//		resultObject = resultObject.append("testCaseID", caseId);
-
-		ArrayList resultArray = new ArrayList();
-
-		for (int i = 0; i < resultList.length; i++) {
-			BasicDBObject res = new BasicDBObject();
-			res = res.append("resultID", i + 1).append("reslut",resultList[i]);
-			resultArray.add(res);
-		}
-		resultObject = resultObject.append("caseResult", resultArray);
+	public String saveDataDB(DBCollection collection, BasicDBObject resultObject, JSONArray resultList) {
+		
+//		ArrayList resultArray = new ArrayList();
+//		
+//		BasicDBObject res = new BasicDBObject();
+//		res = res.append("caseResult", resultList);
+		
+//		res = res.append("resultID", 1).append("result",resultList[0]);
+		
+//		for (int i = 1; i < resultList.length+1; i++) {
+//			System.err.println("qianmian "+i);
+//			res = res.append("resultID", i + 1).append("status",resultList[i]);
+//			System.out.println("qianmian d "+resultList[i]);
+//			res = res.append("resultID", i + 1).append("result",resultList[i+1]);
+//			System.out.println("houmian d "+resultList[i+1]);
+//			i++;
+//			System.err.println("houmian: "+i);
+//			resultArray.add(res);
+//		}
+		resultObject = resultObject.append("caseResult", resultList);
 		
 		System.out.println(resultObject);
 		collection.insert(resultObject);
-
+		
 		return null;
-
+		
 	}
+	
+	
+	
+	//******************* not used ************************** 
 
 	/**
 	 * 

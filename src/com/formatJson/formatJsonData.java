@@ -1,121 +1,134 @@
 package com.formatJson;
 
-import java.io.UnsupportedEncodingException;
+
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.methodInterface.formatData;
+import com.seleniumMethod.basicMethods;
+import com.systemSupport.matchTestCase;
 
-public class formatJsonData implements formatData{
-	//对特殊值的截取处理
-	//test for git
+
+public class formatJsonData {
 	
-	public String slipData(String valueProperty) {
+	
+	public static List<Map<String,String>> formatJsonOnce(String oneCaseJson) throws Exception {
 		
-		String validValue = null;
+		List<Map<String, String>> rsList = new ArrayList<Map<String, String>>();
+		JSONArray totalArray = JSONArray.fromObject("["+oneCaseJson+"]");
+		rsList = arrayToMap(totalArray, rsList, rsList.size());
 		
-		int include = valueProperty.indexOf("linproperty_");
-		
-		if(valueProperty.equals("to click")){
-			validValue = "click";
-		}else if(valueProperty.equals("verifyText")){
-			validValue = "verifyText";
-		}else if(include == -1){
-			validValue = valueProperty.substring(9);
-			validValue = unicodeToChar(validValue);
-		}else if(include == 0){
-			validValue = valueProperty.substring(valueProperty.indexOf("_") + 1);
-		}else{
-			validValue = valueProperty;
-		}
-		return validValue;
+		return rsList;
 	}
+	
+	public static JSONArray  formatJsonTwice(String oneCase){
+		/*
+		 * if the rsList is null, need the method give a wrong message.
+		 */
+		JSONArray actionArray = null;
 
+		if(oneCase.equals(null) || oneCase.equals("")){
+			System.err.println("傳入的case沒有信息！");
+		}else{
+			actionArray = JSONArray.fromObject(oneCase);
+		}
+	return actionArray;
+		
+	}
+	
+
+	
+	private static List<Map<String, String>> arrayToMap(JSONArray jsonArray, List<Map<String,String>> rsList, int localid){
+		for (int i = 0; i < jsonArray.size(); i++) {
+			Map<String, String> map = new HashMap<String, String>();
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+			for (Iterator<?> iter = jsonObject.keys(); iter.hasNext();) {
+				String key = (String) iter.next();
+				String value = jsonObject.get(key).toString();
+				map.put(key, value);
+//				System.out.println("the map.get(key) is :"+map.get(key));
+			}
+			rsList.add(localid,map);
+		}
+		return rsList;
+	}
 	
 	//处理unicode转化成中文
 	public String unicodeToChar(String valueData){
 		
 		String charData="";
-//		int includeU = valueData.indexOf("%u");
 		charData=  StringEscapeUtils.unescapeHtml(valueData);
 		charData =URLDecoder.decode(charData);
 		
-//		if(includeU == 0){
-//			String removeU = valueData.replace("%", "");
-//			String[] dataString = removeU.split("u"); 
-//			for(int i = 1; i<dataString.length;i++){
-//				int hexVal = Integer.parseInt(dataString[i],16);
-//				charData += (char)hexVal;
-//			}
-//		}else{
-//			charData=  StringEscapeUtils.unescapeHtml(valueData);
-//			try {
-//				charData = URLDecoder.decode(charData,"UTF-8");
-//			} catch (UnsupportedEncodingException e) {
-//				e.printStackTrace();
-//			}
-//		}
 		return charData;
 	}
 	
 	
-	public String caseformat(List<JSONObject> listObject) throws JSONException{
-		List<JSONObject> caseObject = new ArrayList<JSONObject>();
-		for (int n = 0; n<listObject.size();n++){
-			JSONObject oneCase = listObject.get(n);
-			caseObject.add(0,oneCase);
-			caseObject.add(1,oneCase.getJSONObject("duration"));
-			
-			int actionLength = oneCase.getJSONArray("action").length();
-			for(int m= 0; m<actionLength; m++){
-				JSONObject oneAction = (JSONObject) oneCase.getJSONArray("action").get(m);
-				//需要处理单条数据
-				oneAction = formatStep(oneAction);
-				caseObject.add(m+2, oneAction);
-		}
-		}
-		return null;
-	}
+	/**
+	 * json字符串转map map中的数据可以通过get方法来调用
+	 * 
+	 * @param dataJson
+	 *            传入的json数据信息，应该是从数据库中读到的信息。
+	 * @return
+	 * @throws Exception
+	 */
 	
-	//通过循环读取数据进行处理 将处理好的数据放回json
-	public JSONObject formatStep(JSONObject oneAction) throws JSONException{
-//		caseObject.add(m+2,oneStep);
-		//需要处理单条数据
-		String stepType = oneAction.getJSONObject("description").toString();
-		if(stepType == "Recording"){
-			for(int k = 1; k<oneAction.length()+1;k++){
-				JSONObject stepCase = oneAction.getJSONObject("step_"+k);
-				String oneProperty = stepCase.getString("property");
-				String validValue = new formatJsonData().slipData(oneProperty);
-				stepCase.put("property", validValue);
-				String unicode = stepCase.getString("value");
-				String unicodeValue = new formatJsonData().unicodeToChar(unicode);
-				stepCase.put("value", unicodeValue);
-			}
-		}else if(stepType.equals("verify")){
-			for(int h = 1;h<oneAction.length()-1;h++){
-				JSONObject stepCase = oneAction.getJSONObject("step_"+h);
-				String oneProperty = stepCase.getString("property");
-				String validValue = new formatJsonData().slipData(oneProperty);
-				stepCase.put("property", validValue);
-				String unicode = stepCase.getString("value");
-				String unicodeValue = new formatJsonData().unicodeToChar(unicode);
-				stepCase.put("value", unicodeValue);
+	public static String formatEmailContent(JSONArray content) {
+		String emailContent = "";
+		
+		String startUrl = (String) content.getJSONObject(0).get("result");
+		String caseTitle=(String)content.getJSONObject(0).get("caseTitle");
+		emailContent +="<h2>"+caseTitle+"</h2>";
+		//Sstem.out.println("output: " + startUrl);
+		emailContent += "<h2>" + startUrl + "</h2>";
+		
+//		for(int n = 1 ; n<content.size()+1;n++){
+//		JSONObject all = content.getJSONObject(1);
+//		System.err.println("IS array: " + all.isArray());
+		//JSONArray x = all.names();
+		//System.out.println(x);
+		for(int n = 1; n<content.size(); n++){
+			JSONArray every_step = (JSONArray) content.getJSONObject(n).get("actionResult_"+n);//maybe there need a for
+			emailContent += "<h3>"+"actionResult_"+n+"/<h3>";
+			for (int k=0; k<every_step.size();k++) {
+				JSONObject check_point = every_step.getJSONObject(k);
+				String result1 = (String) check_point.get("stepId");
+				String result2 = (String) check_point.get("status");
+				String result3 = (String) check_point.get("result");
+				
+				emailContent += "<p>" + result1 + "</p>";
+				emailContent += "<p>" + result2 + "</p>";
+				emailContent += "<p>" + result3 + "</p>";
 			}
 		}
-		return oneAction;
-	}
+		return emailContent;
 		
+	}
+//	public static String formatEmailContent(String emailContent) {
+//
+//		System.out.println("email字符串内容如下" + emailContent);
+//		
+//		emailContent = emailContent.replaceAll("\"", "&nbsp;");
+//		emailContent = emailContent.replace("}]],[[{", "</div></p><br><p><div align='left'>");
+//		emailContent = emailContent.replace("},[[{", "</div></p><br><p><div align='left'>");
+//		
+//		emailContent = emailContent.replace("}]]]", "</div></p>");
+//		emailContent = emailContent.replace("}],[{", "<br>");
+//		emailContent = emailContent.replace("},{", "<br>");
+//		emailContent = emailContent.replace("[{", "<p><div align='left'>");
+//		
+//		emailContent = emailContent.replaceAll(",", "<br>");
+//		
+//		emailContent = emailContent.replaceAll("status", "<b>");
+//		emailContent = emailContent.replaceAll("!", "</b>");
+//		
+//		return emailContent;
+//
+//		
+//	}
+	
 }
-
-//System.out.println(filedata.getJSONObject("duration"));
-//System.out.println(filedata.getJSONArray("actions"));
-//System.out.println(filedata.getJSONArray("actions").getJSONObject(0));
-//System.out.println(filedata.getJSONArray("actions").getJSONObject(0).getString("description"));
-//System.out.println(filedata.getJSONArray("actions").getJSONObject(0).getJSONObject("step_"+1));

@@ -1,18 +1,21 @@
 package com.seleniumMethod;
 
 import static org.junit.Assert.assertEquals;
+import net.sf.json.JSONObject;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.methodInterface.methodInterface;
+import com.systemSupport.givenConfig;
 
-public class verifyMethods implements methodInterface{
+public class verifyMethods {
 
 	StringBuffer verificationErrors = new StringBuffer();
-	String verifyResult = null;
-
+//	String[]  verifyResult = new String[2];
+	JSONObject verifyResult = new JSONObject();
+	private String pathType = givenConfig.pathType;
+//	private WebDriver driver = givenConfig.driver;
+	private int waitTime = 10000;
 	/**
 	 * 测试页面的page title是否正确。 属于verifyMethods类
 	 * 
@@ -24,20 +27,27 @@ public class verifyMethods implements methodInterface{
 	 *            是頁面的link地址（待定，用于写入测试结果）。
 	 * @return testResult 测试结果保存参数。
 	 */
-	public String verifyPageTitle(WebDriver driver, String titleText) {
+	public JSONObject verifyPageTitle(WebDriver driver, String titleText, int n) {
 
 		try {
 			assertEquals(titleText, driver.getTitle());
-			verifyResult = "page title is right!" + '\n';
-			System.out.println("Page title is right! The title is: "
-					+ titleText);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Success!");
+			verifyResult.put("result", "The page title is: " + titleText+".");
+//			verifyResult[0] ="Case Success!";
+//			verifyResult[1] = "The page title is: " + titleText+ '\n' + '\r';
 		} catch (Exception e) {
 			verificationErrors.append(e.toString());
-			verifyResult = "There is something wrong with the test, the page not load properly." + '\n';
-			System.out.println(verifyResult);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Fail!");
+			verifyResult.put("result", "There is something wrong with the testing, the page not load properly.");
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "There is something wrong with the testing, the page not load properly." + '\n' + '\r';
 		}catch(AssertionError e){
-			verifyResult = "The page title is not :" + titleText+ '\n';
-			System.out.println(verifyResult);
+			verifyResult.put("status", "Case Fail!");
+			verifyResult.put("result", "The page title is not: " + titleText+".");
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "The page title is not: " + titleText+ '\n';
 		}
 		return verifyResult;
 	}
@@ -51,24 +61,36 @@ public class verifyMethods implements methodInterface{
 	 * @param pathText 传入的页面对位参数
 	 * @return
 	 */
-	public String verifyText(WebDriver driver, String verifyText ,String pathType, String pathText) {
-		int waitTime = 10000;
-		WebElement webElement = new findElementAndWait().isByElementDisplayed(driver, pathType, pathText, waitTime);
+	public JSONObject verifyText(WebElement webElement, String verifyText, String pathText,int n) {
+		
 		if (verifyText != "" && verifyText != null) {
 			try{
 				assertEquals(verifyText,webElement.getText());
-				verifyResult = "Case Success! Found the text: "+verifyText+" in pathType: "+pathType+" : " +pathText+ '\n';
-				System.out.println(verifyResult);
+				verifyResult.put("stepId", "verify step_"+n);
+				verifyResult.put("status", "Case Success!");
+				verifyResult.put("result", "Found the text: "+verifyText+" in the path: "+ pathText +".");
+//				verifyResult[0] ="Case Success!";
+//				verifyResult[1] = "Found the text: "+verifyText+" in the path: "+ pathText + '\n' + '\r';
+				System.err.println(verifyResult);
 			} catch (Exception e) {
-				verifyResult = "Case Fail! There are something wrong with the pathType: "+pathType+ " : " + pathText + '\n';
-				System.out.println(verifyResult);
+				verifyResult.put("stepId", "verify step_"+n);
+				verifyResult.put("status", "Case Fail!");
+				verifyResult.put("result", "There is something wrong with the path or page: "+  pathText +".");
+//				verifyResult[0] ="Case Fail!";
+//				verifyResult[1] = "There is something wrong with the path or page: "+  pathText + '\n' + '\r';
+				System.err.println(verifyResult);
 			}catch(AssertionError e){
-				verifyResult = "Case Fail! The text: " +verifyText+" does not match in pathType: " + pathType + ": "+pathText+'\n';
-				System.out.println(verifyResult);
+				verifyResult.put("stepId", "verify step_"+n);
+				verifyResult.put("status", "Case Fail!");
+				verifyResult.put("result", "The text: " +verifyText+" does not match in the page text: " + webElement.getText()+" in the path: "+pathText+".");
+//				verifyResult[0] ="Case Fail!";
+//				verifyResult[1] = "The text: " +verifyText+" does not match in the page text: " + webElement.getText()+" in the path: "+pathText+'\n' + '\r';
+				System.err.println(verifyResult);
 			}
 		}else{
-			verifyResult = "The text given to verify is null or balnk. The pathType is: " + pathType + " : " + pathText + '\n';
-			System.out.println(verifyResult);
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "The text given to verify is null or balnk. The path is: " +  pathText + '\n' + '\r';
+			System.err.println(verifyResult);
 		}
 		return verifyResult;
 	}
@@ -82,21 +104,32 @@ public class verifyMethods implements methodInterface{
 	 * @param pathText 传入的页面中的元素的定位参数
 	 * @return
 	 */
-	public String verifyElementProperty(WebDriver driver, String verifyText ,String elementProperty, String pathType, String pathText) {
-		int waitTime = 2000;
-		WebElement webElement = new findElementAndWait().isByElementDisplayed(driver, pathType, pathText, waitTime);
+	
+	public JSONObject verifyElementProperty(WebElement webElement, String verifyText ,String elementProperty, String pathText,int n) {
 		//添加一个方法进行多属性匹配~
 		try{
 			assertEquals(verifyText,webElement.getAttribute(elementProperty));
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Success!");
+			verifyResult.put("result", "The element property in path: "+ pathText +" is match given property: " +elementProperty+".");
 //			System.out.println("Case Success! The element property in the page is :"+webElement.getAttribute(elementProperty));
-			verifyResult = "Case Success! The "+ elementProperty +" for element in pathType "+pathType+" : " +pathText+ " is right"+'\n';
-			System.out.println(verifyResult);
+//			verifyResult[0] ="Case Success!";
+//			verifyResult[1] = "The element property in path: "+ pathText +" is match given property: " +elementProperty+ '\n' + '\r';
+			System.err.println(verifyResult);
 		} catch (Exception e) {
-			verifyResult = "Case Fail! Something wrong with the test, maybe the page not load in or path is wrong. The pathText: "+pathText+ '\n';
-			System.out.println(verifyResult);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Fail!");
+			verifyResult.put("result", "There is something wrong with the test, maybe the page not load in or path is wrong. The pathText is: "+pathText+".");
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "There is something wrong with the test, maybe the page not load in or path is wrong. The pathText is: "+pathText+ '\n' + '\r';
+			System.err.println(verifyResult);
 		}catch(AssertionError e){
-			verifyResult = "Case Fail! The "+ elementProperty +" for element is not match in pathType: " + pathType + " : " + pathText+'\n';
-			System.out.println(verifyResult);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Fail!");
+			verifyResult.put("result", "The element property in path: "+ pathText+" is not match given elementProperty: "+elementProperty+".");
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "The element property in path: "+ pathText+" is not match given elementProperty: "+elementProperty+ '\n' + '\r';
+			System.err.println(verifyResult);
 		}
 		return verifyResult;
 	}
@@ -108,16 +141,22 @@ public class verifyMethods implements methodInterface{
 	 * @param pathText
 	 * @return 返回的是布尔型变量。
 	 */
-	public String verifyElementExist(WebDriver driver, String pathType, String pathText){
-		int waitTime = 2000;
-		WebElement webElement = new findElementAndWait().isByElementDisplayed(driver, pathType, pathText, waitTime);
+	public JSONObject verifyElementExist(WebElement webElement,  String pathText, int n){
 		if(webElement == null){
-			verifyResult = "The Element which want to find is not exist in the "+pathType+" : "+pathText+'\n';
-			System.out.println(verifyResult);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Success!");
+			verifyResult.put("result", "The Element which want to find is not exist in the path: "+ pathText+".");
+//			verifyResult[0] ="Case Success!";
+//			verifyResult[1] = "The Element which want to find is not exist in the path: "+ pathText+ '\n' + '\r';
+			System.err.println(verifyResult);
 			
 		}else{
-			verifyResult = "The Element which want to find is exist in the "+pathType+" : "+pathText+'\n';
-			System.out.println(verifyResult);
+			verifyResult.put("stepId", "verify step_"+n);
+			verifyResult.put("status", "Case Fail!");
+			verifyResult.put("result", "The Element which want to find is exist in the path: "+pathText+".");
+//			verifyResult[0] ="Case Fail!";
+//			verifyResult[1] = "The Element which want to find is exist in the path: "+pathText+ '\n' + '\r';
+			System.err.println(verifyResult);
 		}
 		return verifyResult;
 	}

@@ -1,13 +1,14 @@
 package com.seleniumMethod;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class newVerifyMethod {
-	public String verifyMethod(WebDriver driver, JSONObject oneAction){
+	public String verifyMethod(WebDriver driver, JSONObject oneAction) throws JSONException{
 		
 		String pathType = "xPath";
 		int waitTime = 2000;
@@ -31,22 +32,22 @@ public class newVerifyMethod {
 		
 		
 		
-		WebElement webElement = new findElementAndWait().isByElementDisplayed(driver, pathType, pathText, waitTime);
+		WebElement webElement = new findElementAndWait().isByElementDisplayed(driver, pathText);
 		
-		try {
-			assertEquals(titleText, driver.getTitle());
-			verifyResult = "page title is right!" + '\n';
-			System.out.println("Page title is right! The title is: "
-					+ titleText);
-		} catch (Exception e) {
-			verificationErrors.append(e.toString());
-			verifyResult = "There is something wrong with the test, the page not load properly." + '\n';
-			System.out.println(verifyResult);
-		}catch(AssertionError e){
-			verifyResult = "The page title is not :" + titleText+ '\n';
-			System.out.println(verifyResult);
-		}
-		return verifyResult;
+//		try {
+//			assertEquals(titleText, driver.getTitle());
+//			verifyResult = "page title is right!" + '\n';
+//			System.out.println("Page title is right! The title is: "
+//					+ titleText);
+//		} catch (Exception e) {
+//			verificationErrors.append(e.toString());
+//			verifyResult = "There is something wrong with the test, the page not load properly." + '\n';
+//			System.out.println(verifyResult);
+//		}catch(AssertionError e){
+//			verifyResult = "The page title is not :" + titleText+ '\n';
+//			System.out.println(verifyResult);
+//		}
+//		return verifyResult;
 		return null;
 		
 	}

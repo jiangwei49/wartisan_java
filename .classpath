@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javaemail"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/json-jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mongodb"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/selenium"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/xmlRead"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/selenium2.44"/>
+	<classpathentry kind="lib" path="D:/temp/jar_Wartisan2.0/selenium/selenium-2.42.2/libs/json-20080701.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
