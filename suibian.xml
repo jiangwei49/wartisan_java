@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<MongoDB>
+  <!--Adobe AIR-->
+  <Connect name="Connect MongoDB">
+  
+    <dbserverip dbserverip = "127.0.0.1" />
+    <dbport dbport = "27017" />
+    <dbname dbname = "casetest"/>
+    <collectionname collectionname = "ffcase"/>
+
+  </Connect>
+  <Save name="Connect MongoDB">
+  
+    <dbserverip dbserverip = "127.0.0.1" />
+    <dbport dbport = "27017" />
+    <dbname dbname = "casetest"/>
+    <collectionname collectionname = "result"/>
+
+  </Save>
+  	
+  <ReportEmail name ="Connect Email">
+  	<sendEmail sendEmail="webmaster@wartisan.com"/>
+  	<emailTitle emailTitle="Test Case Report from Wartisan"/>
+  </ReportEmail>
+</MongoDB>
